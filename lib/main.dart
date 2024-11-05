@@ -11,12 +11,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mewwing Mobile',
+      title: 'mewwing',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF2C5F2D),
+          secondary: const Color(0xFFFFB200),
+        ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Mewwing Mobile Menu'),
+      home: const MyHomePage(),
     );
   }
 }
