@@ -10,22 +10,28 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final String storeName = 'Mewwing E-Commerce';
   
+  final List<Color> _itemColors = [
+    const Color(0xFF2C5F2D),
+    const Color(0xFFFFB200), 
+    Colors.red,
+  ];
+
   final List<Product> products = [
     Product(
       name: "Dummy Data 1: Beluga",
-      price: 50.000,
+      price: 50.00,
       category: "Kucing Rumah",
       image: "https://uploads.dailydot.com/2018/10/olli-the-polite-cat.jpg?q=65&auto=format&w=1600&ar=2:1&fit=crop",
     ),
     Product(
       name: "Dummy Data 2: Roti Gemblong",
-      price: 120.000,
+      price: 120.00,
       category: "Kucing Bola Bulu",
       image: "https://s.puainta.com/static/uploadimages/4096567/ead29af406822c5ee6dd27b65b341fa4.webp",
     ),
     Product(
       name: "Dummy Data 3: Confused Cat",
-      price: 41.000,
+      price: 41.00,
       category: "Kucing Rumah",
       image: "https://a.pinatafarm.com/940x529/254350840f/white-cat-da2c837628aa5a4d253f3956efa6244f-meme.jpeg",
     ),
@@ -57,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
         SnackBar(
           content: Text(message),
           duration: const Duration(seconds: 1),
+          backgroundColor: _itemColors[index],
         ),
       );
   }
@@ -192,22 +199,38 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shop),
-            label: 'Lihat Daftar Produk',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart),
-            label: 'Tambah Produk',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.logout),
-            label: 'Logout',
-          ),
-        ],
+        items: List.generate(3, (index) {
+          IconData icon;
+          String label;
+          
+          switch (index) {
+            case 0:
+              icon = Icons.shop;
+              label = 'Lihat Daftar Produk';
+              break;
+            case 1:
+              icon = Icons.add_shopping_cart;
+              label = 'Tambah Produk';
+              break;
+            case 2:
+              icon = Icons.logout;
+              label = 'Logout';
+              break;
+            default:
+              icon = Icons.error;
+              label = 'Error';
+          }
+          
+          return BottomNavigationBarItem(
+            icon: Icon(
+              icon,
+              color: _selectedIndex == index ? _itemColors[index] : Colors.grey,
+            ),
+            label: label,
+          );
+        }),
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF2C5F2D),
+        selectedItemColor: _itemColors[_selectedIndex],
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
