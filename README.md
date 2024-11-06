@@ -42,13 +42,18 @@
    Sementara itu, final lebih fleksibel karena nilai dapat diinisialisasi saat runtime (ketika program dijalankan) meskipun setelah diinisialisasi nilai tidak dapat diubah (immutable). final juga dapat menampung objek yang mutable, artinya isi objek masih bisa dimodifikasi meski referensinya tidak bisa diubah. Contoh penggunaan final yaitu seperti mendefinisikan nama toko ```final String storeName = 'Mewwing E-Commerce'```, list produk ```final List<Product> products = [...]``` yang artinya isi list masih bisa dimodifikasi, atau produk final Product product yang bisa diisi dari constructor.
 
 5. **Jelaskan bagaimana cara kamu mengimplementasikan checklist-checklist di atas.**
+   
    - Membuat sebuah program Flutter baru dengan tema E-Commerce yang sesuai dengan tugas-tugas sebelumnya.
      
      1. Buka text editor pilihan, lalu buka terminal.
      2. Jalankan command berikut pada direktori pilihan.
+        
         ```flutter create mewwing_mobile```
+        
      3. Setelah menjalankan command tersebut, jalankan command
+        
         ```flutter run```
+        
      4. Apabila berhasil dijalankan, maka artinya pengembangan program flutter dapat dilakukan.
 
    - Membuat tiga tombol sederhana dengan ikon dan teks untuk:
