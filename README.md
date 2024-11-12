@@ -163,3 +163,79 @@
        Fungsi ini adalah method yang dipanggil ketika pengguna menekan salah satu item di ```BottomNavigationBar```. Saat dipanggil, fungsi ini menerima parameter index yang menunjukkan posisi item yang ditekan (0 untuk Lihat Daftar Produk, 1 untuk Tambah Produk, 2 untuk Logout). Pertama, fungsi menggunakan ```setState``` untuk memperbarui nilai ```_selectedIndex``` agar UI dapat diperbarui sesuai item yang dipilih. Kemudian, menggunakan struktur switch-case, fungsi menentukan pesan yang sesuai berdasarkan index item yang ditekan. Terakhir, fungsi menampilkan Snackbar (notifikasi pop-up di bagian bawah layar) menggunakan ```ScaffoldMessenger``` yang menampilkan pesan sesuai tombol yang ditekan, dengan durasi 1 detik dan warna latar belakang yang sesuai dengan warna item di ```_itemColors``` (hijau untuk Lihat Produk, kuning untuk Tambah Produk, merah untuk Logout).
     
 </details>
+
+<details>
+  <summary><b>Tugas 8: Flutter Navigation, Layouts, Forms, and Input Elements</b></summary>
+
+1. Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
+
+   const digunakan untuk mendeklarasikan objek yang bersifat konstan dan tidak akan berubah selama runtime. Keuntungan utama dari menggunakan const adalah peningkatan performa, karena objek yang dideklarasikan dengan const hanya akan dibuat sekali dan disimpan dalam memori, menghindari pembuatan ulang objek yang sama berkali-kali. Ini sangat bermanfaat dalam aplikasi dengan banyak elemen yang identik, seperti widget yang tidak berubah. Selain itu, penggunaan const dapat meningkatkan kejelasan kode, karena menunjukkan bahwa nilai atau objek tersebut tidak akan berubah. Sebaiknya kita menggunakan const ketika kita tahu nilai atau objek tidak akan berubah setelah kompilasi, seperti pada widget statis atau nilai variabel yang tetap. Namun, hindari penggunaan const pada objek yang memerlukan perubahan nilai atau berhubungan dengan state dinamis, karena itu dapat menyebabkan kesalahan atau logika yang tidak diinginkan.
+
+2. Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
+
+   Column: Widget yang digunakan untuk menyusun elemen-elemen secara vertikal.
+   Row: Widget yang digunakan untuk menyusun elemen-elemen secara horizontal.
+
+   Perbandingan dari keduanya adalah column cocok untuk tata letak vertikal, seperti daftar/list panjang atau form, sedangkan row lebih cocok untuk tata letak horizontal, seperti menu navigasi/navbar.
+
+   Contoh implementasi column:
+   ```
+   ...
+   Column(
+      children: <Widget>[
+        Text('produk pertama'),
+        Text('produk kedua'),
+        ElevatedButton(
+          onPressed: () {},
+          child: Text(':v'),
+        ),
+      ],
+    )
+   ...
+   ```
+   Elemen-elemen Text dan ElevatedButton disusun secara vertikal di dalam Column.
+
+   Contoh implementasi row:
+   ```
+   Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Icon(Icons.home),
+        Icon(Icons.search),
+        Icon(Icons.settings),
+      ],
+    )
+   ```
+   Tiga ikon disusun secara horizontal di dalam Row dan diatur dengan jarak yang sama antar ikon menggunakan MainAxisAlignment.spaceEvenly.
+
+3. Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
+
+   - Product Name (_nameController): Input teks untuk nama produk menggunakan widget ```TextFormField``` dengan ikon ```Icons.shopping_bag```.
+   - Price (_amountController): Input teks untuk harga produk menggunakan widget ```TextFormField``` dengan ikon ```Icons.attach_money``` dan prefiks ```'Rp '```.
+   - Description (_descriptionController): Input teks area untuk deskripsi produk menggunakan widget ```TextFormField``` dengan ikon ```Icons.description``` dan maksimal input 60 karakter.
+   - Image URL (_imageURLController): Input teks untuk URL gambar produk menggunakan widget ```TextFormField``` dengan ikon ```Icons.image```.
+
+   Implementasi elemen-elemen input tersebut sudah sesuai dengan requirement pada tugas individu kali ini. Jadi, sepertinya tidak ada elemen input flutter yang tidak diimplementasikan pada tugas kali ini.
+
+4. Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
+
+   Kita dapat memanfaatkan tema (```theme```) yang dapat digunakan untuk mengatur tampilan visual secara konsisten di seluruh aplikasi, termasuk warna, font, tombol, dan elemen UI lainnya. Tema dapat diatur menggunakan ```ThemeData``` yang dikonfigurasi dalam widget ```MaterialApp``` atau ```CupertinoApp```.
+
+   Pada ```main.dart```, saya mengimplementasikan warna tema untuk aplikasi ini. Berikut potongan codenya:
+   ```
+   ...
+   theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF2C5F2D), 
+        secondary: const Color(0xFFFFB200), 
+      ),
+      useMaterial3: true,
+   ),
+   ...
+   ```
+   Pada ```MaterialApp```, ada properti ```theme``` yang menggunakan objek ```ThemeData```. Tema ini diatur dengan menggunakan ```ColorScheme.fromSeed()```, yang menetapkan warna utama dan sekunder untuk aplikasi.
+
+5. Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
+
+   Navigasi dalam Flutter bisa dilakukan dengan berbagai cara, contohnya seperti implementasi yang saya lakukan pada ```BottomNavigationBar``` untuk berpindah antar halaman utama seperti ```Home```, ```Add Product```, dan ```Profile```. Pada Flutter, navigasi antar halaman dapat menggunakan ```Navigator.push``` untuk membuka halaman baru di atas halaman yang aktif, atau ```Navigator.pushReplacement``` untuk mengganti halaman saat ini tanpa menyimpan halaman sebelumnya di tumpukan navigasi. Selain itu, cara yang lain adalah dapat menggunakan ```routes``` di dalam ```MaterialApp``` dalam mengelola rute yang lebih kompleks. Dengan mendefinisikan ```named routes```, setiap halaman dapat dipanggil secara langsung tanpa harus membuat instance baru.
+</details>
