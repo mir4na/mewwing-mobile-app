@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mewwing_mobile/widgets/left_drawer.dart';
+import 'package:mewwing_mobile/screens/add_product.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -39,37 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    String message = "";
-    switch (index) {
-      case 0:
-        message = "Kamu telah menekan tombol Lihat Daftar Produk!";
-        break;
-      case 1:
-        message = "Kamu telah menekan tombol Tambah Produk!";
-        break;
-      case 2:
-        message = "Kamu telah menekan tombol Logout!";
-        break;
-    }
-    
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-          duration: const Duration(seconds: 1),
-          backgroundColor: _itemColors[index],
-        ),
-      );
-  }
-
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -95,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      drawer: const LeftDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -131,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.white,
                       ),
                     ),
+                    
                   ],
                 ),
               ),
@@ -205,12 +181,12 @@ class _MyHomePageState extends State<MyHomePage> {
           
           switch (index) {
             case 0:
-              icon = Icons.shop;
-              label = 'Lihat Daftar Produk';
+              icon = Icons.home;
+              label = 'Home';
               break;
             case 1:
               icon = Icons.add_shopping_cart;
-              label = 'Tambah Produk';
+              label = 'Add Product';
               break;
             case 2:
               icon = Icons.logout;
@@ -232,7 +208,19 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _selectedIndex,
         selectedItemColor: _itemColors[_selectedIndex],
         unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AddProductScreen()),
+              );
+            case 2:
+              break;
+          }
+        },
       ),
     );
   }
