@@ -238,4 +238,323 @@
 5. Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
 
    Navigasi dalam Flutter bisa dilakukan dengan berbagai cara, contohnya seperti implementasi yang saya lakukan pada ```BottomNavigationBar``` untuk berpindah antar halaman utama seperti ```Home```, ```Add Product```, dan ```Profile```. Pada Flutter, navigasi antar halaman dapat menggunakan ```Navigator.push``` untuk membuka halaman baru di atas halaman yang aktif, atau ```Navigator.pushReplacement``` untuk mengganti halaman saat ini tanpa menyimpan halaman sebelumnya di tumpukan navigasi. Selain itu, cara yang lain adalah dapat menggunakan ```routes``` di dalam ```MaterialApp``` dalam mengelola rute yang lebih kompleks. Dengan mendefinisikan ```named routes```, setiap halaman dapat dipanggil secara langsung tanpa harus membuat instance baru.
+
+6. Implementasi checklist
+
+   A. Membuat minimal satu halaman baru pada aplikasi, yaitu halaman formulir tambah item baru dengan ketentuan sebagai berikut:
+   
+     - Memakai minimal tiga elemen input, yaitu name, amount, description. Tambahkan elemen input sesuai dengan model pada aplikasi tugas Django yang telah kamu buat.
+
+       Pada page form ```add_product.dart```, terdapat implementasi 3 elemen input, yaitu Product Name, Price, dan Description. Setiap elemen diwakili oleh ```TextFormField``` dan diatur sesuai tipe data masing-masing. Setiap ```TextFormField``` dikontrol oleh ```TextEditingController```, seperti ```_nameController``` untuk Product Name, ```_amountController``` untuk Price, dan ```_descriptionController``` untuk Description.
+
+       ```
+       ...
+       _buildFormField(
+          controller: _nameController,
+          label: 'Product Name',
+          icon: Icons.shopping_bag,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a product name';
+            }
+            return null;
+          },
+        ),
+       ...
+       ```
+       ```
+       ...
+       _buildFormField(
+          controller: _amountController,
+          label: 'Price',
+          icon: Icons.attach_money,
+          keyboardType: TextInputType.number,
+          prefixText: 'Rp ',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a price';
+            }
+            if (double.tryParse(value) == null) {
+              return 'Please enter a valid number';
+            }
+            return null;
+          },
+        ),
+       ...
+       ```
+       ```
+       ...
+       _buildFormField(
+          controller: _descriptionController,
+          label: 'Description',
+          icon: Icons.description,
+          maxLines: 4,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a description';
+            }
+            return null;
+          },
+        ),
+       ...
+       ```
+       
+     - Memiliki sebuah tombol Save.
+       
+       Tombol ```Save Product``` ditempatkan di bagian bawah form. Tombol ini dikontrol oleh status ```_isLoading``` yang mengatur apakah tombol tersebut aktif atau tidak, dan juga mengubah teks menjadi ```Saving...``` saat data sedang diproses.
+  
+       ```screens/add_product.dart```
+       ```
+       ...
+       ElevatedButton(
+          onPressed: _isLoading ? null : _saveProduct,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2C5F2D),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: Text(
+            _isLoading ? 'Saving...' : 'Save Product',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+       ...
+       ```
+       
+     - Setiap elemen input di formulir juga harus divalidasi dengan ketentuan sebagai berikut:
+       - Setiap elemen input tidak boleh kosong.
+       - Setiap elemen input harus berisi data dengan tipe data atribut modelnya.
+
+         Setiap elemen input menggunakan validator untuk memastikan data yang dimasukkan sesuai ketentuan: tidak boleh kosong dan harus berisi tipe data yang sesuai. Jika input tidak memenuhi kriteria, maka pesan error akan ditampilkan.
+         
+         ```screens/add_product.dart```
+         ```
+         ...
+         validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a product name';
+            }
+            return null;
+          },
+         ...
+         ```
+         
+         ```
+         ...
+         validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a price';
+            }
+            if (double.tryParse(value) == null) {
+              return 'Please enter a valid number';
+            }
+            return null;
+          },
+         ...
+         ```
+         
+         ```
+         ...
+         validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a description';
+            }
+            return null;
+          },
+         ...
+         ```
+
+   B. Mengarahkan pengguna ke halaman form tambah item baru ketika menekan tombol Tambah Item pada halaman utama.
+
+      ```screens/menu.dart```
+      ```
+      ...
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: List.generate(3, (index) {
+          IconData icon;
+          String label;
+          
+          switch (index) {
+            case 0:
+              icon = Icons.home;
+              label = 'Home';
+              break;
+            case 1:
+              icon = Icons.add_shopping_cart;
+              label = 'Add Product';
+              break;
+            case 2:
+              icon = Icons.logout;
+              label = 'Logout';
+              break;
+            default:
+              icon = Icons.error;
+              label = 'Error';
+          }
+          
+          return BottomNavigationBarItem(
+            icon: Icon(
+              icon,
+              color: _selectedIndex == index ? _itemColors[index] : Colors.grey,
+            ),
+            label: label,
+          );
+        }),
+        currentIndex: _selectedIndex,
+        selectedItemColor: _itemColors[_selectedIndex],
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AddProductScreen()),
+              );
+              break;
+            case 2:
+              break;
+          }
+        },
+      ),
+      ...
+      ```
+
+      Implementasi navigasi dilakukan ketika mengarahkan pengguna ke halaman form tambah item baru dilakukan melalui komponen ```BottomNavigationBar```. Ketika pengguna menekan item kedua pada navigation bar (yang diberi label ```"Add Product"``` dan ikon ```Icons.add_shopping_cart```), metode ```onTap``` pada ```BottomNavigationBar``` akan menangkap event ini. Selanjutnya, ```Navigator.pushReplacement``` akan dijalankan dengan ```MaterialPageRoute```, yang memuat widget ```AddProductScreen``` sebagai tujuan. Ini menyebabkan halaman baru (form tambah item) ditampilkan menggantikan halaman utama saat ini.
+
+   C. Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman formulir tambah item baru.
+
+     ```screens/add_product.dart```
+     ```
+     ...
+     Future<void> _saveProduct() async {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+          setState(() {
+            _isLoading = true;
+          });
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+            final product = {
+              'name': _nameController.text,
+              'amount': double.parse(_amountController.text),
+              'description': _descriptionController.text,
+              'imageURL': _imageURLController.text,
+            };
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => ProductEntryDialog(product: product),
+            );
+          }
+        }
+      }
+     ...
+     ```
+     Ketika pengguna menekan tombol Save pada halaman form add product, data yang dimasukkan dalam form akan muncul dalam sebuah dialog pop-up yang berisi detail produk yang baru disimpan. Metode ```_saveProduct()``` bertugas untuk memvalidasi dan menyimpan data dari formulir menggunakan```_formKey```, lalu menginisiasi dialog ```ProductEntryDialog``` yang menampilkan informasi produk sesuai input pada form.
+
+    ```widgets/product_entry.dart```
+    ```
+    ...
+    @override
+    Widget build(BuildContext context) {
+        final currencyFormatter = NumberFormat.currency(
+          locale: 'id_ID',
+          symbol: 'Rp ',
+          decimalDigits: 0,
+        );
+        return AlertDialog(
+          title: const Text('Product Saved Successfully!', style: TextStyle(...)),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                if (product['imageURL'] != null && product['imageURL'].isNotEmpty)
+                  CachedNetworkImage(imageUrl: product['imageURL'], ...),
+                _buildDetailItem('Product Name', product['name']),
+                _buildDetailItem('Amount', currencyFormatter.format(product['amount'])),
+                _buildDetailItem('Description', product['description']),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  (route) => false,
+                );
+              },
+              child: const Text('Done', style: TextStyle(...)),
+            ),
+          ],
+        );
+    }
+    ...
+    ```
+    Dialog pop-up ditampilkan menggunakan ```ProductEntryDialog```, yang menampilkan data produk seperti nama, jumlah, deskripsi, dan gambar. Class ```ProductEntryDialog``` menggunakan widget ```AlertDialog``` untuk menampilkan data ini, dengan komponen ```SingleChildScrollView``` di dalamnya untuk mengelola layout isi dialog. Jika URL gambar valid, maka ```CachedNetworkImage``` akan menampilkan gambar produk, sedangkan informasi lain seperti nama, jumlah, dan deskripsi produk ditampilkan dengan fungsi ```_buildDetailItem```.
+
+   D. Membuat sebuah drawer pada aplikasi dengan ketentuan sebagai berikut:
+      - Drawer minimal memiliki dua buah opsi, yaitu Halaman Utama dan Tambah Item.
+      - Ketika memiih opsi Halaman Utama, maka aplikasi akan mengarahkan pengguna ke halaman utama.
+      - Ketika memiih opsi Tambah Item, maka aplikasi akan mengarahkan pengguna ke halaman form tambah item baru.
+
+      ```
+      ...
+      ListTile(
+        leading: const Icon(
+          Icons.home_outlined,
+          color: Color(0xFF2C5F2D),
+        ),
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            fontSize: 16,
+            color: Color(0xFF2C5F2D),
+          ),
+        ),
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MyHomePage(),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: const Icon(
+          Icons.add_shopping_cart,
+          color: Color(0xFF2C5F2D),
+        ),
+        title: const Text(
+          'Add Product',
+          style: TextStyle(
+            fontSize: 16,
+            color: Color(0xFF2C5F2D),
+          ),
+        ),
+        onTap: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddProductScreen(),
+            ),
+          );
+        },
+      ),
+      ...
+      ```
+      Komponen ```Drawer``` dibuat dengan daftar opsi yang ditampilkan sebagai ```ListView``` agar pengguna dapat memilih opsi yang diinginkan. Drawer minimal memiliki dua opsi: ```"Home"``` untuk mengarahkan pengguna ke halaman utama dan ```"Add Product"``` untuk mengarahkan ke halaman form add product. Setiap opsi menggunakan ```ListTile``` dengan ikon dan teks untuk memperjelas fungsi masing-masing pilihan, dan mengimplementasikan navigasi menggunakan ```Navigator.pushReplacement``` agar halaman yang sebelumnya terbuka ditutup saat halaman baru dibuka.
+     
 </details>
