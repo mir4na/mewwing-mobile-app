@@ -1,23 +1,45 @@
-// models/product.dart
+// To parse this JSON data, do
+//
+//     final welcome = welcomeFromJson(jsonString);
 
 import 'dart:convert';
 
-List<Product> productFromJson(String str) => 
-    List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
+List<Welcome> welcomeFromJson(String str) => List<Welcome>.from(json.decode(str).map((x) => Welcome.fromJson(x)));
 
-String productToJson(List<Product> data) => 
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String welcomeToJson(List<Welcome> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Product {
-    int id;
+class Welcome {
+    String model;
+    String pk;
+    Fields fields;
+
+    Welcome({
+        required this.model,
+        required this.pk,
+        required this.fields,
+    });
+
+    factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
+        model: json["model"],
+        pk: json["pk"],
+        fields: Fields.fromJson(json["fields"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "model": model,
+        "pk": pk,
+        "fields": fields.toJson(),
+    };
+}
+
+class Fields {
     String name;
-    int amount;
+    double amount;
     String description;
     String imageUrl;
     DateTime date;
 
-    Product({
-        required this.id,
+    Fields({
         required this.name,
         required this.amount,
         required this.description,
@@ -25,17 +47,15 @@ class Product {
         required this.date,
     });
 
-    factory Product.fromJson(Map<String, dynamic> json) => Product(
-        id: json["id"],
+    factory Fields.fromJson(Map<String, dynamic> json) => Fields(
         name: json["name"],
-        amount: json["amount"],
+        amount: json["amount"]?.toDouble(),
         description: json["description"],
         imageUrl: json["image_url"],
         date: DateTime.parse(json["date"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "id": id,
         "name": name,
         "amount": amount,
         "description": description,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mewwing_mobile/models/product.dart';
+import 'package:mewwing_mobile/models/product.dart'; // Updated import
 import 'package:mewwing_mobile/widgets/left_drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  Future<List<Product>> fetchProduct() async {
+  Future<List<Welcome>> fetchProduct() async {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.get('http://127.0.0.1:8000/cat_json/');
@@ -21,15 +21,14 @@ class _ProductPageState extends State<ProductPage> {
         throw Exception('No data received');
       }
 
-      List<Product> listProduct = [];
+      List<Welcome> listProduct = [];
       for (var d in response) {
         if (d != null) {
-          listProduct.add(Product.fromJson(d));
+          listProduct.add(Welcome.fromJson(d));
         }
       }
       return listProduct;
     } catch (e) {
-      // Lebih baik untuk logging error
       print('Error detail: $e');
       throw Exception('Failed to load products: $e');
     }
@@ -48,9 +47,9 @@ class _ProductPageState extends State<ProductPage> {
         onRefresh: () async {
           setState(() {});
         },
-        child: FutureBuilder<List<Product>>(
+        child: FutureBuilder<List<Welcome>>(
           future: fetchProduct(),
-          builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+          builder: (context, AsyncSnapshot<List<Welcome>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -73,7 +72,7 @@ class _ProductPageState extends State<ProductPage> {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (_, index) {
-                var product = snapshot.data![index];
+                var product = snapshot.data![index].fields; // Access fields
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -120,6 +119,14 @@ class _ProductPageState extends State<ProductPage> {
                         Text(
                           product.description,
                           style: const TextStyle(fontSize: 14.0),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Added: ${product.date.toString().split(' ')[0]}',
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
