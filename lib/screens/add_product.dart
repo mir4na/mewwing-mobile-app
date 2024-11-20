@@ -3,6 +3,8 @@ import 'package:mewwing_mobile/widgets/product_entry.dart';
 import 'package:mewwing_mobile/screens/menu.dart';
 import 'package:mewwing_mobile/widgets/left_drawer.dart';
 import 'package:mewwing_mobile/screens/profile.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -39,12 +41,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
         _isLoading = true;
       });
 
-      await Future.delayed(const Duration(seconds: 1));
+      final request = context.read<CookieRequest>();
 
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+      try {
+        Map<String, dynamic> productData = {
+            'nama': _nameController.text,
+            'amount': int.parse(_amountController.text),
+            'description': _descriptionController.text,
+            'image_url': _imageURLController.text,
+        };
 
         final product = {
           'name': _nameController.text,
@@ -53,17 +58,65 @@ class _AddProductScreenState extends State<AddProductScreen> {
           'imageURL': _imageURLController.text,
         };
 
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => ProductEntryDialog(product: product),
+        if (mounted) {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => ProductEntryDialog(product: product),
+          );
+        }
+
+        final response = await request.postJson(
+          "http://127.0.0.1:8000/add-cat/",
+          productData,
         );
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          if (response['status'] == 'success') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Product successfully saved!"),
+                backgroundColor: Color(0xFF2C5F2D),
+              ),
+            );
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Error saving product. Please try again."),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error: ${e.toString()}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Text(

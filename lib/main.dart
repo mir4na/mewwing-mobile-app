@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mewwing_mobile/screens/menu.dart';
+import 'package:mewwing_mobile/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,16 +12,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'mewwing',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2C5F2D),
-          secondary: const Color(0xFFFFB200),
+    return MultiProvider(
+      providers: [
+        Provider<CookieRequest>(
+          create: (_) => CookieRequest(),
         ),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+      ],
+      child: MaterialApp(
+          title: 'mewwing',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF2C5F2D),
+              secondary: const Color(0xFFFFB200),
+            ),
+            useMaterial3: true,
+          ),
+          home: const LoginPage()),
     );
   }
 }

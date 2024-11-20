@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:mewwing_mobile/screens/menu.dart';
+import 'package:mewwing_mobile/screens/list_product.dart';
 
 class ProductEntryDialog extends StatelessWidget {
   final Map<String, dynamic> product;
@@ -67,7 +67,7 @@ class ProductEntryDialog extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const MyHomePage()),
+                MaterialPageRoute(builder: (context) => const ProductPage()),
                 (route) => false,
               );
             },

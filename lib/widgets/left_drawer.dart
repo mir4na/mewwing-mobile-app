@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mewwing_mobile/screens/about_us.dart';
-import 'package:mewwing_mobile/screens/menu.dart';
 import 'package:mewwing_mobile/screens/add_product.dart';
+import 'package:mewwing_mobile/screens/menu.dart';
 import 'package:mewwing_mobile/screens/profile.dart'; 
+import 'package:mewwing_mobile/screens/list_product.dart';
+import 'package:mewwing_mobile/screens/login.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    
     return Drawer(
       child: SafeArea(
         child: ListView(
@@ -89,7 +95,6 @@ class LeftDrawer extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Profile page
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const ProfileScreen(),
@@ -110,13 +115,22 @@ class LeftDrawer extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Product page
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const AddProductScreen(),
                   ),
                 );
               },
+            ),
+            ListTile(
+                leading: const Icon(Icons.add_reaction_rounded),
+                title: const Text('Product List'),
+                onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProductPage()),
+                    );
+                },
             ),
             const Divider(
               color: Color(0xFF2C5F2D),
@@ -137,7 +151,6 @@ class LeftDrawer extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // About page
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const AboutUsScreen(),
@@ -157,8 +170,28 @@ class LeftDrawer extends StatelessWidget {
                   color: Colors.red,
                 ),
               ),
-              onTap: () {
-                Navigator.pop(context);
+              onTap: () async {
+                final response = await request.logout(
+                  "http://127.0.0.1:8000/auth/logout/");
+                String message = response["message"];
+                if (context.mounted) {
+                  if (response['status']) {
+                    String uname = response["username"];
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("$message Sampai jumpa, $uname."),
+                    ));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(message),
+                      ),
+                    );
+                  }
+                }
               },
             ),
           ],
